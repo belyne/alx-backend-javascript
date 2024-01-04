@@ -1,11 +1,14 @@
+/* eslint-disable radix */
 export default function iterateThroughObject(reportWithIterator) {
-	  let result = '';
-	  for (const department of reportWithIterator) {
-		      if (Array.isArray(department)) {
-			            result += department.join(' | ') + ' | ';
-			          } else {
-					        result += department + ' | ';
-					      }
-		    }
-	  return result.slice(0, -2); // Remove the trailing ' | ' at the end
+  let output = '';
+
+  for (const [index, item] of Object.entries(reportWithIterator)) {
+    output += `${item}`;
+
+    if (parseInt(index) !== reportWithIterator.length - 1) {
+      output += ' | ';
+    }
+  }
+
+  return output;
 }
