@@ -25,12 +25,11 @@ module.exports = {
       'LabeledStatement',
       'WithStatement',
     ],
-    'import/extensions': ['error', 'ignorePackages', { 'js': 'always', 'mjs': 'always' }],
   },
-  overrides: [
+  overrides:[
     {
       files: ['*.js'],
       excludedFiles: 'babel.config.js',
-    },
-  ],
+    }
+  ]
 };
