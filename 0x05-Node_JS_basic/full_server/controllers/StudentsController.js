@@ -1,42 +1,38 @@
 // full_server/controllers/StudentsController.js
-
-const { readDatabase } = require('../utils');
+import readDatabase from '../utils';
 
 class StudentsController {
   static async getAllStudents(req, res) {
     try {
-      const students = await readDatabase(req.app.locals.databasePath);
-      res.status(200).send(`This is the list of our students\n${formatStudents(students)}`);
+      const database = await readDatabase('./database.csv');
+      const response = 'This is the list of our students\n';
+      
+      Object.keys(database).sort((a, b) => a.localeCompare(b)).forEach((field) => {
+        response += `Number of students in ${field}: ${database[field].length}. List: ${database[field].join(', ')}\n`;
+      });
+
+      res.status(200).send(response);
     } catch (error) {
-      console.error(error);
       res.status(500).send('Cannot load the database');
     }
   }
 
   static async getAllStudentsByMajor(req, res) {
-    const major = req.params.major.toUpperCase();
+    const { major } = req.params;
+
     if (major !== 'CS' && major !== 'SWE') {
-      res.status(500).send('Major parameter must be CS or SWE');
-      return;
+      return res.status(500).send('Major parameter must be CS or SWE');
     }
 
     try {
-      const students = await readDatabase(req.app.locals.databasePath);
-      const majorStudents = students[major] || [];
-      res.status(200).send(`List: ${majorStudents.join(', ')}`);
+      const database = await readDatabase('./database.csv');
+      const response = `List: ${database[major].join(', ')}`;
+
+      res.status(200).send(response);
     } catch (error) {
-      console.error(error);
       res.status(500).send('Cannot load the database');
     }
   }
 }
 
-function formatStudents(students) {
-  const result = [];
-  Object.entries(students).sort((a, b) => a[0].localeCompare(b[0])).forEach(([field, names]) => {
-    result.push(`Number of students in ${field}: ${names.length}. List: ${names.join(', ')}`);
-  });
-  return result.join('\n');
-}
-
-module.exports = StudentsController;
+export default StudentsController;
