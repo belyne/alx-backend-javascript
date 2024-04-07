@@ -1,39 +1,41 @@
-// 10-api/api.js
+// 9-api/api.js
 const express = require('express');
-const bodyParser = require('body-parser');
+
 const app = express();
+const port = 7865;
 
-const PORT = 7865;
-
-app.use(bodyParser.json());
+app.use(express.json());
 
 app.get('/', (req, res) => {
   res.send('Welcome to the payment system');
 });
 
-app.get('/cart/:id(\\d+)', (req, res) => {
-  const { id } = req.params;
-  res.send(`Payment methods for cart ${id}`);
+app.get('/cart/:id([0-9]+)', (req, res) => {
+    res.send(`Payment methods for cart ${req.params.id}`);
 });
 
-// New endpoint with regex validation for :id (must be only a number)
 app.get('/available_payments', (req, res) => {
-  res.json({
+    res.set("Content-Type", "application/json");
+    const paymentOptions = {
     payment_methods: {
-      credit_cards: true,
-      paypal: false
+          credit_cards: true,
+          paypal: false
     }
-  });
+    }
+    res.send(paymentOptions);
 });
 
-// New endpoint for POST /login
 app.post('/login', (req, res) => {
-  const { userName } = req.body;
-  res.send(`Welcome ${userName}`);
+    const user = req.body.user || req.body.userName;
+    if (user) {
+    res.send(`Welcome ${user}`);
+    } else {
+    res.status(404).send();
+    }
 });
 
-const server = app.listen(PORT, () => {
-  console.log(`API available on localhost port ${PORT}`);
+app.listen(port, () => {
+    console.log(`API available on localhost port ${port}`);
 });
 
-module.exports = server;
+module.exports = app;
