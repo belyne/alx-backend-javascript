@@ -9,7 +9,7 @@ app.get('/', (req, res) => {
 });
 
 // New endpoint with regex validation for :id (must be only a number)
-app.get('/cart/:id(\\d+)', (req, res) => {
+app.get('/cart/:id([0-9]+)', (req, res) => {
   const { id } = req.params;
   res.send(`Payment methods for cart ${id}`);
 });
