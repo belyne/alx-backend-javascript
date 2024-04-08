@@ -1,19 +1,29 @@
+const chai = require('chai');
 const sinon = require('sinon');
-const sendPaymentRequestToApi = require('./4-payment.js');
-const Utils = require('./utils.js');
+const sendPaymentRequestToApi = require('./4-payment');
+const Utils = require('./utils');
 
-describe('sendPaymentRequestToApi', function () {
-  it('should use Utils.calculateNumber', function () {
-    const stub = sinon.stub(Utils, 'calculateNumber');
-    stub.returns(10);
-    const spy = sinon.spy(console, 'log');
+describe('sendPaymentRequestToApi', function() {
+  let consoleSpy;
 
-    sendPaymentRequestToApi(100, 20);
+  beforeEach(function() {
+    consoleSpy = sinon.spy(console, 'log');
+  });
 
-    sinon.assert.calledWith(stub, 'SUM', 100, 20);
-    sinon.assert.calledWith(spy, 'The total is: 10');
+  afterEach(function() {
+    consoleSpy.restore();
+  });
 
-    stub.restore();
-    spy.restore();
+  it('should call Utils.calculateNumber with correct arguments and log the correct message', function() {
+    const calculateNumberStub = sinon.stub(Utils, 'calculateNumber').returns(10);
+    const type = 'SUM';
+    const a = 100;
+    const b = 20;
+    sendPaymentRequestToApi(a, b);
+
+    chai.expect(calculateNumberStub.calledOnceWithExactly(type, a, b)).to.be.true;
+    chai.expect(consoleSpy.calledOnceWithExactly('The total is: 10')).to.be.true;
+
+    calculateNumberStub.restore();
   });
 });
