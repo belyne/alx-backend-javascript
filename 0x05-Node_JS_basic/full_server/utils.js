@@ -1,24 +1,30 @@
 // full_server/utils.js
+import fs from 'fs';
 
-const fs = require('fs').promises;
-
-function readDatabase(filePath) {
-  return new Promise((resolve, reject) => {
-    fs.readFile(filePath, 'utf8')
-      .then((data) => {
-        const lines = data.split('\n').filter((line) => line.trim() !== '');
-        const students = {};
-        lines.forEach((line) => {
-          const [firstName, , , field] = line.split(',');
-          if (!students[field]) {
-            students[field] = [];
+const readDatabase = (path) => new Promise((resolve, reject) => {
+  fs.readFile(path, 'utf8', (err, data) => {
+    if (err) reject(Error('Cannot load the database'));
+    else {
+      const hashtable = {};
+      const lines = data.split('\n');
+      let students = -1;
+      for (const line of lines) {
+        if (line.trim() !== '') {
+          const columns = line.split(',');
+          const field = columns[3];
+          const firstname = columns[0];
+          if (students >= 0) {
+            if (!Object.hasOwnProperty.call(hashtable, field)) {
+              hashtable[field] = [];
+            }
+            hashtable[field] = [...hashtable[field], firstname];
           }
-          students[field].push(firstName.trim());
-        });
-        resolve(students);
-      })
-      .catch((error) => reject(new Error('Cannot load the database')));
+          students += 1;
+        }
+      }
+      resolve(hashtable);
+    }
   });
-}
+});
 
-module.exports = { readDatabase };
+export default readDatabase;
