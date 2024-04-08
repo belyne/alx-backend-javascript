@@ -1,7 +1,7 @@
 const chai = require('chai');
 const sinon = require('sinon');
 const sendPaymentRequestToApi = require('./4-payment');
-const Utils = require('./utils');
+const Utils = require('./utils-0');
 
 describe('sendPaymentRequestToApi', function() {
   let consoleSpy;
